@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>علم الأردن</title>
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Cairo", sans-serif;
+  background-color: #1a4b84;
+  color: white;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 36px;
+  margin: 0 0 30px 0;
+  animation: floatText 2s ease-in-out infinite alternate;
+}
+
+@keyframes floatText {
+  from { transform: translateY(-20px); }
+  to { transform: translateY(20px); }
+}
+
+button {
+  background-color: #00e0b8;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 25px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: floatButton 2s ease-in-out infinite alternate;
+}
+
+button:hover {
+  transform: scale(1.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+@keyframes floatButton {
+  from { transform: translateY(-10px); }
+  to { transform: translateY(10px); }
+}
+</style>
+</head>
+<body>
+  <h1>هل أنت مستعد لاختبار معرفتك بألوان علم الأردن؟</h1>
+  <button onclick="location.href='game 1.html'">🎮 ابدأ اللعبة</button>
+</body>
+</html>

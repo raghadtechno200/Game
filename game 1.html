@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>طابق الألوان مع معانيها - علم الأردن</title>
+<style>
+  body{background:#f5f5f5;font-family:"Cairo",sans-serif;margin:0;padding:30px;text-align:center;color:#111}
+  h1{font-size:44px;margin:10px 0 30px}
+  .colors{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:26px}
+  .card{width:140px;height:120px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:22px;box-shadow:0 6px 14px rgba(0,0,0,.08)}
+  .red{background:#e3262a} .black{background:#0a0a0a} .white{background:#fff;color:#111;border:2px solid #bbb} .green{background:#0b7a2a}
+  .meaning-row{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:14px}
+  .slot{width:220px;height:110px;border-radius:12px;border:2px dashed #999;background:#fff;padding:10px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1.4;color:#222}
+  .slots-wrap{margin-top:12px}
+  .controls{margin-top:26px}
+  button{background:#178c2b;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-size:17px;cursor:pointer}
+  .note{margin-top:10px;color:#666}
+  /* small responsive */
+  @media (max-width:560px){.card{width:110px;height:90px;font-size:18px}.slot{width:90%}}
+</style>
+</head>
+<body>
+  <h1>طابق اللون مع معناه — علم الأردن </h1>
+
+  <div class="colors" id="colorsContainer">
+    <div class="card red" draggable="true" id="col-red">أحمر</div>
+    <div class="card black" draggable="true" id="col-black">أسود</div>
+    <div class="card white" draggable="true" id="col-white">أبيض</div>
+    <div class="card green" draggable="true" id="col-green">أخضر</div>
+  </div>
+
+  <div class="slots-wrap">
+    <div class="meaning-row">
+      <div class="slot" data-answer="red">يرمز إلى راية الثورة العربية الكبرى والأسرة الهاشمية</div>
+      <div class="slot" data-answer="black">يرمز إلى الدولة العباسية وراية النبي محمد صلى الله عليه وسلم</div>
+      <div class="slot" data-answer="white">يرمز إلى الدولة الأموية</div>
+      <div class="slot" data-answer="green">يرمز إلى الدولة الفاطمية وآل البيت</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="checkBtn">تحقق من إجابتي</button>
+    <button onclick="location.href='game 2.html'" style="margin-left:12px;background:#0b66a1">التالي: رتب الأشرطة</button>
+    <div class="note">اسحب اللون وضعه على المربع النصي الذي يناسب دلالته.</div>
+  </div>
+
+<script>
+  const colorsContainer = document.getElementById('colorsContainer');
+  const colors = document.querySelectorAll('[draggable="true"]');
+  const slots = document.querySelectorAll('.slot');
+
+  colors.forEach(c => {
+    c.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', c.id);
+    });
+    c.addEventListener('click', () => {
+      window._selectedColor = c.id;
+      c.style.outline = '3px solid rgba(0,0,0,0.12)';
+      setTimeout(()=> c.style.outline = 'none', 900);
+    });
+  });
+
+  slots.forEach(s => {
+    s.addEventListener('dragover', e => e.preventDefault());
+    s.addEventListener('drop', e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      placeColor(id, s);
+    });
+
+    s.addEventListener('click', () => {
+      if(window._selectedColor) { placeColor(window._selectedColor, s); window._selectedColor = null; }
+    });
+  });
+
+  function placeColor(id, slot){
+    // إذا في شريط سابق يرجع للمنطقة الأصلية
+    if(slot.dataset.placed){
+      const oldId = 'col-' + slot.dataset.placed;
+      const oldEl = document.getElementById(oldId);
+      if(oldEl) colorsContainer.appendChild(oldEl);
+    }
+
+    const map = { 'col-red':'#e3262a','col-black':'#0a0a0a','col-white':'#ffffff','col-green':'#0b7a2a' };
+    slot.style.background = map[id] === '#ffffff' ? '#fff' : map[id];
+    slot.style.color = map[id]==='#ffffff' ? '#111' : '#fff';
+    slot.dataset.placed = id.replace('col-',''); 
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', () => {
+    let correct=0;
+    slots.forEach(s => {
+      const want = s.dataset.answer;
+      const placed = s.dataset.placed || '';
+      if(placed === want){
+        s.style.border = '2px solid #14a44d';
+        correct++;
+      } else {
+        s.style.border = '2px solid #d33';
+      }
+    });
+
+    if(correct === slots.length){
+      alert('ممتاز — كل الإجابات صحيحة! انتقل للمستوى التالي.');
+    } else {
+      alert('في بعض الأجوبة غير صحيحة — سيتم إعادة الألوان لتجربة مرة أخرى.');
+      // إعادة جميع الألوان للمنطقة الأصلية
+      slots.forEach(s => {
+        if(s.dataset.placed){
+          const oldEl = document.getElementById('col-' + s.dataset.placed);
+          if(oldEl) colorsContainer.appendChild(oldEl);
+        }
+        s.dataset.placed = '';
+        s.style.background = '#fff';
+        s.style.color = '#222';
+        s.style.border = '2px dashed #999';
+      });
+    }
+  });
+</script>
+</body> 
+</html>
+    

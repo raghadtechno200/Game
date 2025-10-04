@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>رتب ألوان علم الأردن</title>
+<style>
+body {
+  background-color: #f6f6f6;
+  font-family: "Cairo", sans-serif;
+  text-align: center;
+}
+.flag {
+  width: 360px;
+  height: 180px;
+  margin: 20px auto;
+  border: 2px solid black;
+  position: relative;
+  overflow: hidden;
+}
+.slot {
+  width: 100%;
+  height: 60px;
+  border: 2px dashed gray;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.triangle {
+  width: 0;
+  height: 0;
+  border-top: 90px solid transparent;
+  border-bottom: 90px solid transparent;
+  border-left: 120px solid red;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+.star {
+  position: absolute;
+  left: 45px;
+  top: 70px;
+  color: white;
+  font-size: 28px;
+  z-index: 3;
+}
+.drag {
+  width: 240px;
+  height: 60px;
+  margin: 10px auto;
+  border-radius: 5px;
+  cursor: grab;
+}
+.black { background-color: black; }
+.white { background-color: white; border: 1px solid #888; }
+.green { background-color: green; }
+button {
+  background-color: #008a22;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  margin: 10px;
+}
+</style>
+</head>
+<body>
+
+<h2>رتّب الأشرطة في أماكنها الصحيحة على علم الأردن 🇯🇴</h2>
+
+<div class="flag">
+  <div class="slot" id="slot1"></div>
+  <div class="slot" id="slot2"></div>
+  <div class="slot" id="slot3"></div>
+  <div class="triangle"></div>
+  <div class="star">★</div>
+</div>
+
+<p>اسحب الأشرطة إلى أماكنها ↓</p>
+
+<div id="strips">
+  <div class="drag black" draggable="true" id="black"></div>
+  <div class="drag white" draggable="true" id="white"></div>
+  <div class="drag green" draggable="true" id="green"></div>
+</div>
+
+<button onclick="checkFlag()">تحقق</button>
+<button onclick="goHome()" style="background:#0b66a1">الصفحة الرئيسية</button>
+
+<script>
+const draggables = document.querySelectorAll('.drag');
+const slots = document.querySelectorAll('.slot');
+const stripsContainer = document.getElementById("strips");
+
+draggables.forEach(d => {
+  d.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('id', d.id);
+  });
+});
+
+slots.forEach(slot => {
+  slot.addEventListener('dragover', e => e.preventDefault());
+  slot.addEventListener('drop', e => {
+    const id = e.dataTransfer.getData('id');
+    const element = document.getElementById(id);
+
+    if (slot.firstChild) {
+      alert("⚠ لا يمكنك وضع أكثر من شريط في نفس المكان");
+      return;
+    }
+
+    const clone = element.cloneNode(true);
+    clone.setAttribute("draggable", "false");
+    clone.style.margin = "0";
+    clone.style.width = "100%";
+    slot.innerHTML = "";
+    slot.appendChild(clone);
+    slot.setAttribute("data-color", id);
+  });
+});
+
+function checkFlag() {
+  const order = [
+    document.getElementById("slot1").getAttribute("data-color"),
+    document.getElementById("slot2").getAttribute("data-color"),
+    document.getElementById("slot3").getAttribute("data-color")
+  ];
+
+  if (order[0] === "black" && order[1] === "white" && order[2] === "green") {
+    alert("✔ صحيح! هذا هو علم الأردن 🇯🇴");
+  } else {
+    alert("❌ الترتيب غير صحيح، رجّعنا الأشرطة لتعيد المحاولة");
+
+    // تفريغ الأماكن
+    slots.forEach(slot => {
+      slot.innerHTML = "";
+      slot.removeAttribute("data-color");
+    });
+
+    // إرجاع الأشرطة بشكل عشوائي
+    const strips = Array.from(document.querySelectorAll("#strips .drag"));
+    const shuffled = strips.sort(() => Math.random() - 0.5);
+
+    stripsContainer.innerHTML = "";
+    shuffled.forEach(s => {
+      stripsContainer.appendChild(s);
+    });
+  }
+}
+
+function goHome() {
+  window.location.href = "Home.html";
+}
+</script>
+
+</body>
+</html>
